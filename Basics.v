@@ -1,7 +1,7 @@
 Require Import Coq.Arith.PeanoNat.
 Require Import Arith.
 From Coq Require Export String.
-(*
+
 Inductive bool : Type :=
   | true
   | false.
@@ -29,7 +29,8 @@ Definition nandb (a : bool) (b : bool) : bool :=
   |false => negb b
   |true => false
   end.
-
+  Compute negb(nandb(orb true false) false).
+(*
 Example test_nandb1: (nandb true true) = false.
 Proof.
   simpl.
@@ -85,6 +86,7 @@ Module Naturais.
 End Naturais.
 
 
+
 Fixpoint sum' (n : nat) : nat :=
   match n with
   |O => O
@@ -95,10 +97,24 @@ Fixpoint sum' (n : nat) : nat :=
 Fixpoint div2 (n : nat) : nat :=
     match n with
     |O => O
-    |1 => O
+    |S O => O
     |S (S x) => 1 + (div2 x)
     end.
-
+Fixpoint leb' (a: nat) (b: nat) : bool := 
+  match a,b with 
+  |O, O => true
+  |O, _ => false
+  |S a', O => true
+  |(S a'), (S b') => leb' a' b'
+  end.
+Fixpoint subt (n:nat) (m:nat) : nat :=
+  match m with
+  |O => n  
+  |S m' => match n with 
+           |O => n
+           |S n' => subt n' m'
+           end
+  end.
 
 Fixpoint plus (n : nat) (m : nat) : nat :=
     match n with
@@ -128,3 +144,4 @@ Fixpoint fatorial (n : nat) : nat :=
   |S O => S O
   |S n' => mult (S n') (fatorial n')
   end.
+Compute fatorial 5.

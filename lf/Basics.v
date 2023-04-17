@@ -1243,8 +1243,8 @@ Theorem negb_involutive : forall b : bool,
   negb (negb b) = b.
 Proof.
   intros b. destruct b eqn:E.
-  - reflexivity.
-  - reflexivity.  Qed.
+  - simpl. reflexivity.
+  - simpl. reflexivity.  Qed.
 
 (** Note that the [destruct] here has no [as] clause because
     none of the subcases of the [destruct] need to bind any variables,
@@ -1263,8 +1263,8 @@ Theorem andb_commutative : forall b c, andb b c = andb c b.
 Proof.
   intros b c. destruct b eqn:Eb.
   - destruct c eqn:Ec.
-    + reflexivity.
-    + reflexivity.
+    * reflexivity.
+    * simpl. reflexivity.
   - destruct c eqn:Ec.
     + reflexivity.
     + reflexivity.
@@ -1295,7 +1295,6 @@ Qed.
     shapes at multiple levels in a proof. The choice of braces,
     bullets, or a combination of the two is purely a matter of
     taste. *)
-
 Theorem andb3_exchange :
   forall b c d, andb (andb b c) d = andb (andb b d) c.
 Proof.
@@ -1331,8 +1330,16 @@ Qed.
 Theorem andb_true_elim2 : forall b c : bool,
   andb b c = true -> c = true.
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+    intros b c. intros H.
+    destruct b eqn:Eb.
+    - destruct c eqn:Ec.
+      + reflexivity.
+      + rewrite <- H. reflexivity.
+    - destruct c eqn:Ec.
+      + reflexivity.
+      + rewrite <- H. reflexivity.
+Qed.
+
 
 (** Before closing the chapter, let's mention one final
     convenience.  As you may have noticed, many proofs perform case
