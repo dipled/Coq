@@ -94,6 +94,7 @@ Proof.
   - simpl. reflexivity.
   - simpl. rewrite IHb. reflexivity.
 Qed.
+
 Theorem plus_n_1_succ_n: forall n, n + 1 = S n.
 Proof.
   intros n.
@@ -101,6 +102,7 @@ Proof.
   - simpl. reflexivity.
   - simpl. rewrite IHn. reflexivity.
 Qed.
+
 Theorem plus_1_n_succ_n: forall n, 1 + n = S n.
   Proof.
     intros n.
@@ -108,7 +110,8 @@ Theorem plus_1_n_succ_n: forall n, 1 + n = S n.
     - simpl. reflexivity.
     - simpl. reflexivity.
   Qed.
-Theorem plus_one_ass: forall a b, 1 + (a + b) = (a + 1 + b).
+
+  Theorem plus_one_ass: forall a b, 1 + (a + b) = (a + 1 + b).
 Proof.
   intros a b.
   induction a.
@@ -118,12 +121,14 @@ Proof.
   rewrite -> plus_n_1_succ_n.
   rewrite <- pluscom. rewrite IHa. reflexivity.
 Qed.
+
 Theorem plus_1_n_n_1: forall n, 1 + n = n + 1.
 Proof.
   intros n. induction n.
   - reflexivity.
   - rewrite plus_n_1_succ_n. rewrite <- plus_n_1_succ_n. rewrite -> plus_n_1_succ_n. reflexivity.
 Qed.
+
 Theorem one_plus_sum: forall a b, 1 + (a+b) = (1 + a + b).
 Proof.
   intros a c.
@@ -131,18 +136,21 @@ Proof.
   - simpl. reflexivity.
   - simpl. reflexivity.
 Qed.
+
 Theorem plusass: forall a b c, a + (b + c) = b + (a + c).
 Proof.
   intros a b c. induction a.
   -simpl. reflexivity.
   -simpl. rewrite IHa. rewrite plus_succ. reflexivity. 
 Qed.
+
 Theorem multdist: forall a b : nat,  b + b * a = b * S a.
 Proof.
   intros a b. induction b.
   - simpl. reflexivity.
   - simpl. rewrite <- IHb. rewrite plusass. reflexivity.
 Qed.
+
 Theorem multcom: forall a b, a * b = b * a.
 Proof.
   intros a b. 
@@ -150,7 +158,12 @@ Proof.
   -simpl. rewrite n_times_0. reflexivity.
   -simpl. rewrite <- multdist. rewrite IHa. reflexivity. 
 Qed.
-Theorem somatorio_formula: forall n, somatorio n = div2 (n*(n+1)).
-  intros n. induction n as [|n'].
-  - simpl. reflexivity.
-  - simpl. rewrite IHn'.
+
+Theorem somatorio_formula: forall n:nat,
+  somatorio n = div2(n*(S(n))).
+Proof.
+  intros. induction n as [| k IHk].
+  -simpl. reflexivity.
+  -simpl. rewrite IHk.
+  
+Qed.
