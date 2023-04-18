@@ -21,7 +21,18 @@ Definition orb (b1:bool) (b2:bool) : bool :=
   |true => true
   end.
 
+Fixpoint somatorio (n:nat) : nat :=
+  match n with 
+  |O => O 
+  |S n' => n + (somatorio n')
+  end.
 
+Fixpoint div2 (n:nat) : nat := 
+  match n with
+  |O => O
+  |S O => O
+  |S (S n') => 1 + (div2 n')
+  end.
 
 Theorem dem_1: forall a b: bool, (neg (orb a  b)) = andb (neg a) (neg b).
 Proof.
@@ -32,6 +43,17 @@ intros [] [].
 -simpl. reflexivity.
 Qed.
 
+Theorem dem_2: forall a b: bool, (neg (andb a b)) = orb (neg a) (neg b).
+Proof.
+  intros a b.
+  destruct a as [].
+  -destruct b as [].
+    +simpl. reflexivity.
+    +simpl. reflexivity.
+  -destruct b.
+    +simpl. reflexivity.
+    +simpl. reflexivity.
+Qed.
 Theorem succ_n_plus_0: forall n, S n = S (n+0).
 Proof. induction n as [|n' IHn'].
   -reflexivity.
@@ -127,6 +149,8 @@ Proof.
   induction a.
   -simpl. rewrite n_times_0. reflexivity.
   -simpl. rewrite <- multdist. rewrite IHa. reflexivity. 
-  
 Qed.
-
+Theorem somatorio_formula: forall n, somatorio n = div2 (n*(n+1)).
+  intros n. induction n as [|n'].
+  - simpl. reflexivity.
+  - simpl. rewrite IHn'.
