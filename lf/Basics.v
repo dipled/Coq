@@ -1334,12 +1334,11 @@ Proof.
     destruct b eqn:Eb.
     - destruct c eqn:Ec.
       + reflexivity.
-      + rewrite <- H. reflexivity.
+      + rewrite <- H. simpl. reflexivity.
     - destruct c eqn:Ec.
       + reflexivity.
       + rewrite <- H. reflexivity.
 Qed.
-
 
 (** Before closing the chapter, let's mention one final
     convenience.  As you may have noticed, many proofs perform case
@@ -1379,7 +1378,17 @@ Qed.
 Theorem zero_nbeq_plus_1 : forall n : nat,
   0 =? (n + 1) = false.
 Proof.
-  (* FILL IN HERE *) Admitted.
+    intros n. destruct n as [|a] eqn:En.
+      - simpl. reflexivity.
+      - simpl. reflexivity. 
+Qed.
+Theorem zero_nbeq_plus_1' : forall n : nat,
+  0 =? (n + 1) = false.
+Proof.
+    intros [|n'].
+      - simpl. reflexivity.
+      - simpl. reflexivity. 
+Qed.
 (** [] *)
 
 (* ================================================================= *)
@@ -1483,8 +1492,11 @@ Theorem identity_fn_applied_twice :
   (forall (x : bool), f x = x) ->
   forall (b : bool), f (f b) = b.
 Proof.
-  (* FILL IN HERE *) Admitted.
-
+  intros f H b.
+  destruct b.
+  - rewrite H. rewrite H. reflexivity.
+  - rewrite H. rewrite H. reflexivity.
+Qed.
 (** [] *)
 
 (** **** Exercise: 1 star, standard (negation_fn_applied_twice)
@@ -1493,7 +1505,16 @@ Proof.
     to the previous one but where the second hypothesis says that the
     function [f] has the property that [f x = negb x]. *)
 
-(* FILL IN HERE *)
+Theorem negation_fn_applied_twice :  
+  forall (f : bool -> bool),
+  (forall (x : bool), f x = negb x) -> forall (b : bool), f (f b) = b.
+Proof.
+    intros f H b.
+    destruct b.
+    - rewrite H. rewrite H. simpl. reflexivity.
+    - rewrite H. rewrite H. simpl. reflexivity.
+Qed.
+
 
 (* Do not modify the following line: *)
 Definition manual_grade_for_negation_fn_applied_twice : option (nat*string) := None.
@@ -1513,8 +1534,14 @@ Theorem andb_eq_orb :
   (andb b c = orb b c) ->
   b = c.
 Proof.
-  (* FILL IN HERE *) Admitted.
-
+    intros b c. destruct c.
+    -destruct b. 
+      +simpl. reflexivity.
+      +simpl. intros H. rewrite H. reflexivity.
+    -destruct b. 
+      +simpl. intros H. rewrite H. reflexivity.
+      +simpl. reflexivity. 
+Qed.
 (** [] *)
 
 (* ================================================================= *)
