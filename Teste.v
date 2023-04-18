@@ -1,8 +1,6 @@
 Require Import Coq.Arith.PeanoNat.
 Require Import Arith.
 From Coq Require Export String.]
-Require Import PeanoNat.
-Require Import Arith.
 Inductive bool :Type :=
   |true
   |false.
