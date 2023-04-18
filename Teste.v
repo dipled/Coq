@@ -1,136 +1,63 @@
 Require Import Coq.Arith.PeanoNat.
 Require Import Arith.
-From Coq Require Export String.
-(*
-Inductive bool : Type :=
-  | true
-  | false.
-
-Definition negb (b: bool) : bool := 
+From Coq Require Export String.]
+Require Import PeanoNat.
+Require Import Arith.
+Inductive bool :Type :=
+  |true
+  |false.
+Notation "⊥" := false.
+Notation "⊤" := true.
+Definition and (b1:bool) (b2:bool) : bool :=
+  match b1, b2 with
+  |⊤, ⊤ => ⊤
+  |_, _ => ⊥
+  end.
+Notation "p ∧ q" := (and p q) (at level 40, left associativity).
+Definition notb (b:bool) : bool :=
   match b with
   |false => true
   |true => false
   end.
-
-Definition orb (a: bool) (b: bool) : bool := 
-  match a with
+Definition or (b1:bool) (b2:bool) : bool :=
+  match b1 with
+  |false => b2
   |true => true
-  |false => b
   end.
+Infix "∨" := or (at level 20, left associativity).
+Notation "¬" := notb (at level 10).
 
-Definition andb (a: bool) (b: bool) : bool :=
-  match a with
-  |true => b
-  |false => false
-  end.
-
-Definition nandb (a : bool) (b : bool) : bool :=
-  match a with
-  |false => negb b
-  |true => false
-  end.
-
-Example test_nandb1: (nandb true true) = false.
+Theorem dem_1: forall a b: bool, (notb (a ∨ b)) = (¬a ∧ ¬b).
 Proof.
-  simpl.
-  reflexivity.
-Qed. 
-
-Example test_nandb2: (nandb false false) = true.
-Proof.
-  simpl.
-  reflexivity.
-Qed.
-(*Temos expressoes condicionais!!!!!*)
-Definition andb' (a : bool) (b : bool) : bool :=
-  if a then b
-  else false.
-Compute andb' true true.
-
-(*O coq permite voce fazer notacoes proprias 
-como as definidas abaixo*)
-Notation "a && b" := (andb a b).
-Notation "a || b" := (orb a b).
-(*Modulos sao usados para separar funcoes com mesmo nome*)
-Module Pedro.
-  Definition exemplo1 : bool := true.
-End Pedro.
-Definition exemplo1 : nat := S 0.
-
-Check exemplo1.
-Check Pedro.exemplo1.
-
-(*Tuplas podem ser criadas baseadas em tipos existentes*)
-Inductive bit : Type :=
-  |B0
-  |B1.
-Inductive nybble : Type :=
-  |bits (b0 b1 b2 b3 : bit).
-
-Definition allzeros (n :nybble) : bool :=
-  match n with
-  |(bits B0 B0 B0 B0) => true
-  |(bits _ _ _ _) => false
-  end.
-Compute allzeros (bits B0 B0 B0 B0).
-*)
-(*Botando essas definicoes no modulo para nao interferir
-com a biblioteca padrao*)
-Module Naturais.
-
-  Inductive nat : Type := 
-  |O
-  |S (n : nat).
-
-End Naturais.
-
-
-Fixpoint sum' (n : nat) : nat :=
-  match n with
-  |O => O
-  |S n' =>  sum' n' + n
-  end.
-
-
-Fixpoint div2 (n : nat) : nat :=
-    match n with
-    |O => O
-    |1 => O
-    |S (S x) => 1 + (div2 x)
-    end.
-
-Fixpoint subt (a : nat) (b : nat) : nat := 
-  match a,b with
-  |O, (S b') => O
-  |O, O => O
-  |(S a'), (S b') => (subt a' b')
-  |(S a'), O => a
-  end.
-Compute subt 5 6.
-Fixpoint plus (n : nat) (m : nat) : nat :=
-    match n with
-    |O => m 
-    |S n' => S (plus n' m)
-    end.
-
-
-Fixpoint mult (n : nat) (m : nat) : nat := 
-  match n with
-  |O => O
-  |S n' => plus m (mult n' m)
-  end.
-
-Theorem plus_0_n : forall n: nat, O + n = n.
-Proof.
-    intros n.
-    simpl. 
-    reflexivity.
+intros [] [].
+-simpl. reflexivity.
+-simpl. reflexivity.
+-simpl. reflexivity.
+-simpl. reflexivity.
 Qed.
 
+Theorem succ_n_plus_0: forall n, S n = S (n+0).
+Proof. induction n as [|n' IHn'].
+  -reflexivity.
+  -simpl. rewrite IHn'. reflexivity.
+Qed.
 
-Fixpoint fatorial (n : nat) : nat := 
-  match n with
-  |O => S O
-  |S O => S O
-  |S n' => mult (S n') (fatorial n')
-  end.
+Theorem n_plus_0: forall n, n = (n+0).
+Proof. induction n as [|n' IHn'].
+  -reflexivity.
+  -simpl. rewrite succ_n_plus_0. rewrite IHn'. reflexivity.
+Qed.
+
+Theorem plus_succ: forall a b, S(a+b) = a + S(b).
+Proof. intros a b. induction a.
+- simpl. reflexivity.
+- simpl. rewrite <- IHa. reflexivity.
+Qed.
+
+Theorem pluscom: forall a b, a + b = b + a.
+Proof.
+intros a b.
+induction a as [|a' IHa']. 
+- simpl. rewrite <- n_plus_0. reflexivity.
+- simpl. rewrite IHa'. rewrite plus_succ. reflexivity.
+Qed.
