@@ -156,7 +156,15 @@ Proof.
   intros a b. 
   induction a.
   -simpl. rewrite n_times_0. reflexivity.
-  -simpl. rewrite <- multdist. rewrite IHa. reflexivity. 
+  -simpl. rewrite <- multdist. rewrite <- IHa. reflexivity. 
+Qed.
+
+Lemma somatorio_destruir: forall n : nat,
+  somatorio (S n) = (S n) + somatorio n.
+Proof.
+  intros. induction n.
+  -simpl. reflexivity.
+  -simpl. reflexivity.
 Qed.
 
 Theorem somatorio_formula: forall n:nat,
@@ -164,6 +172,5 @@ Theorem somatorio_formula: forall n:nat,
 Proof.
   intros. induction n as [| k IHk].
   -simpl. reflexivity.
-  -simpl. rewrite IHk.
-  
+  -rewrite somatorio_destruir. rewrite IHk. simpl.
 Qed.

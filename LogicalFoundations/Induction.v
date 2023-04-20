@@ -2,6 +2,7 @@ Require Import Coq.Arith.PeanoNat.
 Require Import Arith.
 From Coq Require Export String.
 Theorem mul_0_r : forall n:nat,
+
   n * 0 = 0.
 Proof.
   intros n. induction n as [|n' IHn'].
@@ -29,6 +30,12 @@ Proof.
   -simpl. rewrite <- add_zero. reflexivity.
   -simpl. rewrite -> IHn. rewrite -> plus_n_Sm. reflexivity.
 Qed. 
+Theorem n_times_0: forall n, n * 0 = 0.
+Proof.
+intros n. induction n. 
+-reflexivity.
+-simpl. rewrite -> IHn. reflexivity.
+Qed.
 Theorem add_assoc : forall n m p : nat,
   n + (m + p) = (n + m) + p.
 Proof.
@@ -42,6 +49,7 @@ Fixpoint double (n:nat) :=
   | O => O
   | S n' => S (S (double n'))
   end.
+
 Lemma double_plus : forall n, double n = n + n .
 Proof.
   intros n.
@@ -57,6 +65,7 @@ Proof.
   -simpl. reflexivity.
   -simpl. rewrite IHk. reflexivity.  
 Qed.
+
 Fixpoint even (n:nat) : bool  := 
   match n with
   |O => true
