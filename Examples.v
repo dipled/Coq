@@ -62,3 +62,10 @@ Proof.
   intros.
   destruct H. destruct H. contradiction. assumption.
 Qed.
+
+Example Teste: forall A B C : Prop, (A \/ B) -> (~A -> (B \/ C)).
+Proof.
+  intros.
+  left.
+  destruct H. contradiction. assumption.
+Qed.
