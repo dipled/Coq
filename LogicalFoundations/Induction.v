@@ -69,15 +69,6 @@ Proof.
   *simpl. reflexivity.
   *simpl. rewrite -> IHn. rewrite <- plus_n_Sm. reflexivity.
 Qed.
-
-Theorem eqb_refl : forall n : nat,
-  (n =? n) = true.
-Proof.
-  intros. induction n as [| k IHk].
-  -simpl. reflexivity.
-  -simpl. rewrite IHk. reflexivity.  
-Qed.
-
 Fixpoint even (n:nat) : bool  := 
   match n with
   |O => true
@@ -157,3 +148,24 @@ Proof.
     rewrite add_comm. rewrite IHa. reflexivity.
 Qed.
   
+(*Exercicios feitos por conta (Que nao estao do livro)*)
+
+Fixpoint sum (x : nat) : nat :=
+  match x with
+  |O => O
+  |S (x') => x + (sum x')
+  end.
+Fixpoint div2 (n : nat) : nat :=
+  match n with 
+  |O => O
+  |S O => O
+  |S(S n') => 1 + (div2 n')
+  end.
+
+Theorem gaussSum : forall n, (sum n) = div2 (n*(n+1)).
+Proof.
+  intros. induction n.
+  - simpl. reflexivity.
+  - rewrite mult_dist. rewrite <- succ_n_plus_1.
+    replace (sum (n+1)) with (sum(n) +(n + 1)).
+    + rewrite IHn. rewrite mult_com.
