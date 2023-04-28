@@ -1,5 +1,4 @@
-Require Import Coq.Arith.PeanoNat.
-Require Import Arith.
+
 From Coq Require Export String.
 Theorem mul_0_r : forall n:nat,
 
