@@ -162,6 +162,34 @@ Fixpoint div2 (n : nat) : nat :=
   |S(S n') => 1 + (div2 n')
   end.
 
+Lemma double_dist: forall n b, double(n + b) = double(n) + double (b).
+Proof.
+  intros; induction n.
+  - simpl. reflexivity.
+  -  simpl. rewrite IHn. reflexivity.
+Qed.
+Lemma div_double: forall n, div2(double n) = n.
+Proof.
+  intros; induction n.
+  -simpl. reflexivity.
+  -simpl. rewrite IHn. reflexivity.
+Qed.
+Lemma mmc1: forall a b, div2(a) + b = div2(a + double(b)).
+Proof.
+  intros. induction b.
+  induction a.
+  - simpl. reflexivity.
+  - rewrite <- add_zero. replace (double 0) with 0.
+    rewrite <- add_zero. reflexivity.
+    +reflexivity.
+  - simpl.
+
+    rewrite <- add_zero.
+    reflexivity. 
+  - rewrite <- succ_n_plus_1. rewrite add_assoc. 
+    rewrite IHb. rewrite double_dist.
+    rewrite add_assoc. simpl.
+
 Theorem gaussSum : forall n, (sum n) = div2 (n*(n+1)).
 Proof.
   intros. induction n.
