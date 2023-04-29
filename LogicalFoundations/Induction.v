@@ -1,4 +1,3 @@
-
 From Coq Require Export String.
 Require Import Coq.Init.Nat.
 
@@ -8,7 +7,8 @@ Theorem add_0_r : forall n:nat, n + 0 = n.
 Proof.
   intros n. induction n as [| n' IHn'].
   - reflexivity.
-  - simpl. rewrite -> IHn'. reflexivity.  Qed.
+  - simpl. rewrite -> IHn'. reflexivity.
+Qed.
 
 Theorem add_assoc : forall n m p : nat,
   n + (m + p) = (n + m) + p.
@@ -183,7 +183,6 @@ Proof.
   rewrite plus_n_Sm. rewrite add_assoc. rewrite <- plus_n_Sm.
   reflexivity.
 Qed.
-(*Exercicios feitos por conta (Que nao estao do livro)*) 
 
 Theorem gaussSum : forall n, (sum n) = div2 (n*(n+1)).
 Proof.
@@ -196,3 +195,13 @@ Proof.
     rewrite  <- mult_dist. rewrite add_comm. rewrite -> mul_comm.
     rewrite -> add_assoc. reflexivity.
 Qed.
+
+
+Definition even (n:nat):bool :=
+  if(eqb(div2 n) O) then true
+  else false.
+Definition odd (n:nat):bool := 
+  negb(even n).
+
+
+
