@@ -1,4 +1,5 @@
 Require Import Coq.Unicode.Utf8.
+From LF Require Import Induction.
 Inductive natprod : Type :=
   |pair (n1 n2 :nat).
 
@@ -55,4 +56,19 @@ Fixpoint repeat (n count : nat) : natlist :=
   |S count' => n :: (repeat n count')
   |O => []
   end.
-Compute repeat 3 9.
+
+Fixpoint length (l : natlist) : nat :=
+  match l with
+  |[] => O
+  |(h::t) => S (length t)
+  end.
+
+Fixpoint append (l1 l2 : natlist) : natlist :=
+  match l1 with
+  |[] => l2
+  |(h::t) => h :: (append t l2)
+  end.
+
+Notation " x ++ y " := (append x y)
+  (right associativity, at level 60).
+

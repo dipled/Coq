@@ -1,6 +1,7 @@
 Require Import Coq.Arith.PeanoNat.
 Require Import Arith.
 From Coq Require Export String.
+From LF Require Import Induction.
 Theorem mult_n_zero: forall n: nat, n * 0 = 0.
 Proof.
   intros. induction n.

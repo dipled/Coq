@@ -1,0 +1,4 @@
+-R ../LogicalFoundations LF
+../LogicalFoundations/Basics.v
+../LogicalFoundations/Induction.v
+../LogicalFoundations/Lists.v
