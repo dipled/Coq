@@ -196,7 +196,6 @@ Proof.
     rewrite -> add_assoc. reflexivity.
 Qed.
 
-
 Definition even (n:nat):bool :=
   match n with
   |O => true
@@ -205,6 +204,13 @@ Definition even (n:nat):bool :=
   end.
 Definition odd (n:nat):bool := 
   negb(even n).
-
+Fixpoint eqNat (n m : nat) : bool :=
+  match n,m with
+  |O, O => true
+  |O, _ => false
+  |_, O => false
+  |S n', S m' => eqNat n' m'
+  end.
+  
 
 

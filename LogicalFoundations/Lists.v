@@ -77,12 +77,10 @@ Notation " x ++ y " := (append x y)
 Fixpoint nonzeros (l:natlist) : natlist :=
   match l with
   |[] => []
-  |(h::t) => match h with
-             |O => (nonzeros t)
-             |S n' => cons h (nonzeros t)
-             end
+  |(h::t) => if(eqNat h O) then nonzeros t
+             else h :: (nonzeros t)
   end.
-
+Compute nonzeros [1;2;3;4;5;0;0;0;7].
 Fixpoint oddmembers (l:natlist) : natlist :=
   match l with
   |[] => []
@@ -98,3 +96,7 @@ Fixpoint alternate (l1 l2 : natlist) : natlist :=
   |_, [] => l1
   |(h1::t1), (h2::t2) => h1 :: h2 :: (alternate t1 t2)
   end.
+(*Bags sao sets com repeticao*)
+Definition bag := natlist.
+
+
