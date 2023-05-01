@@ -1,5 +1,6 @@
 Require Import Coq.Unicode.Utf8.
 From LF Require Import Induction.
+
 Inductive natprod : Type :=
   |pair (n1 n2 :nat).
 
@@ -72,3 +73,28 @@ Fixpoint append (l1 l2 : natlist) : natlist :=
 Notation " x ++ y " := (append x y)
   (right associativity, at level 60).
 
+
+Fixpoint nonzeros (l:natlist) : natlist :=
+  match l with
+  |[] => []
+  |(h::t) => match h with
+             |O => (nonzeros t)
+             |S n' => cons h (nonzeros t)
+             end
+  end.
+
+Fixpoint oddmembers (l:natlist) : natlist :=
+  match l with
+  |[] => []
+  |(h::t) => if(odd h) then h :: (oddmembers t)
+             else oddmembers t
+  end.
+Definition countoddmembers (l:natlist) : nat :=
+  length (oddmembers l).
+
+Fixpoint alternate (l1 l2 : natlist) : natlist :=
+  match l1,l2 with
+  |[], _ => l2
+  |_, [] => l1
+  |(h1::t1), (h2::t2) => h1 :: h2 :: (alternate t1 t2)
+  end.

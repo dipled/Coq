@@ -198,8 +198,11 @@ Qed.
 
 
 Definition even (n:nat):bool :=
-  if(eqb(div2 n) O) then true
-  else false.
+  match n with
+  |O => true
+  |S O => false
+  |S (S n') => even n'
+  end.
 Definition odd (n:nat):bool := 
   negb(even n).
 
