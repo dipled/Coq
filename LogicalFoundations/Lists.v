@@ -118,7 +118,7 @@ Proof.
   reflexivity.
 Qed.
 Definition add (v : nat) (s : bag) : bag :=
-  sum s [v].
+  append s [v].
 Example test_add1: count 1 (add 1 [1;4;1]) = 3.
 Proof.
   reflexivity.
@@ -157,5 +157,138 @@ Proof.
 Qed.
 Example test_included2: included [1;2;2] [2;1;4;1] = false.
 Proof.
+  simpl. reflexivity.
+Qed.
+
+(*Logica com listas*)
+Definition tail (l:natlist) : natlist :=
+  match l with
+  |[] => []
+  |(h::t) => t
+  end.
+	
+Theorem tl_length_pred : forall l:natlist,
+  pred (length l) = length (tail l).
+Proof.
+  intros l. destruct l as [| n l'].
+  - (* l = nil *)
+    reflexivity.
+  - (* l = cons n l' *)
+    reflexivity. 
+Qed.
+(*Inducao com listas: Seja l uma lista,
+1) Mostrar que vale para [].
+2) Supor que vale para uma l' e mostrar que vale para uma (cons n l').*)
+Theorem app_assoc : ∀ l1 l2 l3 : natlist,
+  (l1 ++ l2) ++ l3 = l1 ++ (l2 ++ l3).
+Proof.
+  intros.
+  induction l1 as [| n l1' IHl1'].
+  -(*l1 is nil*)
+    simpl. reflexivity.
+  -(*l1 is cons n l1'*)
+    simpl. rewrite IHl1'. reflexivity.
+Qed.
+
+Fixpoint rev (l : natlist) : natlist :=
+  match l with
+  |[] => []
+  |(h::t) =>  (rev t) ++ [h]
+  end.
+Lemma app_length: forall l1 l2 : natlist,
+  length (l1 ++ l2) = (length l1) + (length l2).
+Proof.
+  intros. induction l1.
+  * simpl. reflexivity.
+  * simpl. rewrite <- IHl1. reflexivity.
+Qed.
+Lemma add_length: forall l : natlist, forall n : nat,
+  length(add n l) = S(length(l)).
+Proof.
+  intros. induction l.
+  + simpl. reflexivity.
+  + simpl. rewrite app_length.
+    simpl. rewrite plus_n_1. reflexivity.
+Qed.
+
+Theorem rev_length : ∀ l : natlist,
+  length (rev l) = length l.
+Proof.
+  intros. induction l.
+  + reflexivity.
+  + simpl. rewrite app_length.
+    simpl. rewrite IHl. rewrite plus_n_1. reflexivity.
+Qed.
+(*Podemos pesquisar por teoremas sobre funcoes que esquecemos o nome utilizando Search*)
+Search rev.
+Search (_ + _ = _ + _).
+
+Lemma app_nil_r : ∀ l : natlist,
+  l ++ [] = l.
+Proof.
+  intros. induction l.
+  -reflexivity.
+  -simpl. rewrite IHl. reflexivity.
+Qed. 
+
+Lemma rev_app_distr: ∀ l1 l2 : natlist,
+  rev (l1 ++ l2) = rev l2 ++ rev l1.
+Proof.
+  intros. induction l1.
+  -simpl. rewrite app_nil_r. reflexivity.
+  -simpl. rewrite -> IHl1.
+   rewrite app_assoc. reflexivity.
+Qed.
+Theorem rev_involutive : ∀ l : natlist,
+  rev (rev l) = l.
+Proof.
+  intros. induction l.
+  - reflexivity.
+  - simpl. rewrite rev_app_distr.
+    rewrite IHl. simpl. reflexivity.
+Qed.
+
+Theorem app_assoc4 : ∀ l1 l2 l3 l4 : natlist,
+  l1 ++ (l2 ++ (l3 ++ l4)) = ((l1 ++ l2) ++ l3) ++ l4.
+Proof.
+  intros. rewrite app_assoc. rewrite app_assoc.
   reflexivity.
 Qed.
+
+Lemma nonzeros_app : ∀ l1 l2 : natlist,
+  nonzeros (l1 ++ l2) = (nonzeros l1) ++ (nonzeros l2).
+Proof.
+ intros. induction l1.
+ - reflexivity.
+ - destruct n.
+   +simpl. rewrite IHl1. reflexivity.
+   +simpl. rewrite IHl1. reflexivity.
+Qed.
+
+Fixpoint eqblist (l1 l2 : natlist) : bool :=
+  match l1,l2 with
+  |[],[] => true
+  |_,[] => false
+  |[],_ => false
+  |(h1::t1),(h2::t2) => if(eqNat h1 h2) 
+                        then (eqblist t1 t2)
+                        else false
+  end.
+Lemma eqNat_refl: forall n : nat,
+  true = eqNat n n.
+Proof.
+  intros. induction n.
+  - reflexivity.
+  - simpl. rewrite IHn. reflexivity.
+Qed.
+Theorem eqblist_refl : ∀ l:natlist,
+  true = eqblist l l.
+Proof.
+  intros. induction l.
+  - reflexivity.
+  - simpl. rewrite <- eqNat_refl.
+    rewrite IHl. reflexivity.
+Qed.
+
+
+   
