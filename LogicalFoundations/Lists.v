@@ -318,7 +318,7 @@ Proof.
 Qed.
 
 Theorem involution_injective : ∀ (f : nat → nat),
-    (∀ n : nat, n = f (f n)) → (∀ n1 n2 : nat, f n1 = f n2 → n1 = n2).
+  (∀ n : nat, n = f (f n)) -> (∀ n1 n2 : nat, f n1 = f n2 ->n1 = n2).
 Proof.
   intros. rewrite H.
   rewrite <- H0.
@@ -326,4 +326,30 @@ Proof.
   reflexivity.
 Qed.
 
+Theorem rev_injective : ∀ (l1 l2 : natlist),
+  rev l1 = rev l2 → l1 = l2.
+Proof.
+  intros. rewrite <- rev_involutive. 
+  rewrite <- H. rewrite rev_involutive.
+  reflexivity.
+Qed.
+(*Vamos supor que queremos escrever uma funcao que retorna o n-esimo elemento de uma lista. Caso a lista não tenha um elemento, teriamos que retornar um valor natural para servir de erro, mas isso nao eh uma solucao otima.
+  Podemos, entao, criar um novo tipo, que ira funcionar como um tipo Maybe em Haskell*)
+Inductive natoption : Type :=
+  |Some (c : nat)
+  |None.
+
+Fixpoint nth_error (l : natlist) (n : nat) : natoption :=
+  match l, n with
+  |[], _ => None
+  |(h::t), O => Some h
+  |(h::t), S n' => nth_error t n'
+  end.
+Compute nth_error [1;2;3;4;5;6;7;8;100;5] 100.
+
+Definition head (l : natlist) : natoption :=
+  match l with
+  |[] => None
+  |(h::t) => Some h
+  end.
 
