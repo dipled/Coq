@@ -211,6 +211,5 @@ Fixpoint eqNat (n m : nat) : bool :=
   |_, O => false
   |S n', S m' => eqNat n' m'
   end.
-  
 
 

@@ -1,4 +1,5 @@
 Require Import Coq.Unicode.Utf8.
+Require Import Arith.
 From LF Require Import Induction.
 
 Inductive natprod : Type :=
@@ -219,10 +220,10 @@ Proof.
   + simpl. rewrite app_length.
     simpl. rewrite IHl. rewrite plus_n_1. reflexivity.
 Qed.
-(*Podemos pesquisar por teoremas sobre funcoes que esquecemos o nome utilizando Search*)
+(*Podemos pesquisar por teoremas sobre funcoes que esquecemos o nome utilizando Search
 Search rev.
 Search (_ + _ = _ + _).
-
+*)
 Lemma app_nil_r : ∀ l : natlist,
   l ++ [] = l.
 Proof.
@@ -290,5 +291,39 @@ Proof.
     rewrite IHl. reflexivity.
 Qed.
 
+Theorem count_member_nonzero : ∀ (s : bag),
+  1 <=? (count 1 (1 :: s)) = true.
+Proof.
+  intros. reflexivity.
+Qed.
 
-   
+Theorem leb_n_Sn : ∀ n,
+  n <=? (S n) = true.
+Proof.
+  intros n. induction n as [| n' IHn'].
+  - (* 0 *)
+    simpl. reflexivity.
+  - (* S n' *)
+    simpl. rewrite IHn'. reflexivity.
+Qed.
+
+Theorem remove_does_not_increase_count: ∀ (s : bag),
+  (count 0 (remove_one 0 s)) <=? (count 0 s) = true.
+Proof.
+  intros. induction s.
+  - simpl. reflexivity.
+  - induction n.
+    + simpl. rewrite leb_n_Sn. reflexivity.
+    + simpl. rewrite IHs. reflexivity.
+Qed.
+
+Theorem involution_injective : ∀ (f : nat → nat),
+    (∀ n : nat, n = f (f n)) → (∀ n1 n2 : nat, f n1 = f n2 → n1 = n2).
+Proof.
+  intros. rewrite H.
+  rewrite <- H0.
+  rewrite <- H.
+  reflexivity.
+Qed.
+
+
