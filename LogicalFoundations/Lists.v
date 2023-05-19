@@ -345,14 +345,24 @@ Fixpoint nth_error (l : natlist) (n : nat) : natoption :=
   |(h::t), O => Some h
   |(h::t), S n' => nth_error t n'
   end.
-Compute nth_error [1;2;3;4;5;6;7;8;100;5] 100.
 
-Definition head (l : natlist) : natoption :=
+Definition head (d:nat)(l : natlist) : nat :=
+  match l with
+  |[] => d
+  |(h::t) => h
+  end.
+
+Definition head_error (l : natlist) : natoption :=
   match l with
   |[] => None
   |(h::t) => Some h
   end.
 
+Definition option_elim (d : nat) (o : natoption) : nat :=
+  match o with
+  |None => d
+  |Some c => c
+  end.
 (*Partial Map, análogo ao Map de outras linguagens de programacao*)
 
 (*Um tipo indutivo simples, que apenas serve para nos ajudar em algumas coisas futuramente*)
@@ -405,3 +415,11 @@ Proof.
 Qed.
 
 End PartialMap.
+
+Theorem option_elim_hd : ∀ (l:natlist) (default:nat),
+  head default l = option_elim default (head_error l).
+Proof.
+  intros. induction l.
+  - simpl. reflexivity.
+  - simpl. reflexivity.
+Qed. 
