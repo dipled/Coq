@@ -1,5 +1,4 @@
 From Coq Require Export String.
-Require Import Coq.Init.Nat.
 
 (* Teoremas do Induction.v e Basics.v*)
 
@@ -196,7 +195,7 @@ Proof.
     rewrite -> add_assoc. reflexivity.
 Qed.
 
-Definition even (n:nat):bool :=
+Fixpoint even (n:nat):bool :=
   match n with
   |O => true
   |S O => false
@@ -204,6 +203,7 @@ Definition even (n:nat):bool :=
   end.
 Definition odd (n:nat):bool := 
   negb(even n).
+
 Fixpoint eqNat (n m : nat) : bool :=
   match n,m with
   |O, O => true
@@ -212,4 +212,44 @@ Fixpoint eqNat (n m : nat) : bool :=
   |S n', S m' => eqNat n' m'
   end.
 
+Theorem contras: forall A B : Prop,
+  (A -> B) -> ~B -> ~A.
+Proof.
+  intros.
+  intro.
+  apply H in H1 as H2.
+  apply H0 in H2.
+  destruct H2.
+Qed.
+Definition eqBool (a b: bool): bool :=
+  match a,b with
+  |true, true => true
+  |false, false => true
+  |_,_ => false
+  end.
 
+
+Theorem even_n_SSn: forall n : nat,
+  even(n) = even(S (S n)).
+Proof.
+  intros.
+  simpl.
+  reflexivity.
+Qed.
+
+
+Lemma double_negative: forall a: bool,
+  a = negb(negb a).
+Proof.
+  destruct a; reflexivity.
+Qed.
+
+
+Theorem even_n_Sn: forall n: nat,
+even(S n) = negb (even n).
+Proof.
+  intros. induction n.
+  - reflexivity.
+  - simpl (even(S(S n))).
+    rewrite IHn. rewrite <- double_negative. reflexivity.
+Qed.
