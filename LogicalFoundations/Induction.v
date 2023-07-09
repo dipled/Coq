@@ -1,5 +1,5 @@
 From Coq Require Export String.
-
+From Coq Require Import Unicode.Utf8_core.
 (* Teoremas do Induction.v e Basics.v*)
 
 Theorem add_0_r : forall n:nat, n + 0 = n.
@@ -201,8 +201,8 @@ Fixpoint even (n:nat):bool :=
   |S O => false
   |S (S n') => even n'
   end.
-Definition odd (n:nat):bool := 
-  negb(even n).
+
+Definition odd (n: nat): bool := negb (even n).
 
 Fixpoint eqNat (n m : nat) : bool :=
   match n,m with
@@ -213,13 +213,10 @@ Fixpoint eqNat (n m : nat) : bool :=
   end.
 
 Theorem contras: forall A B : Prop,
-  (A -> B) -> ~B -> ~A.
+  (A -> B) -> (~B -> ~A).
 Proof.
-  intros.
-  intro.
-  apply H in H1 as H2.
-  apply H0 in H2.
-  destruct H2.
+  intros A B. intro. intro. intro. apply H in H1. 
+    apply H0 in H1. destruct H1.
 Qed.
 Definition eqBool (a b: bool): bool :=
   match a,b with
@@ -228,7 +225,17 @@ Definition eqBool (a b: bool): bool :=
   |_,_ => false
   end.
 
-
+Lemma not_equals_eq: forall a: bool,
+  a = false <-> a <> true.
+Proof.
+  intros. destruct a.
+  - split.
+    + intro. discriminate.
+    + intro. destruct H. reflexivity.
+  - split.
+    + intro. discriminate.
+    + intro. reflexivity. 
+Qed.
 Theorem even_n_SSn: forall n : nat,
   even(n) = even(S (S n)).
 Proof.
@@ -253,3 +260,78 @@ Proof.
   - simpl (even(S(S n))).
     rewrite IHn. rewrite <- double_negative. reflexivity.
 Qed.
+
+Theorem even_and: ∀ n m : nat,
+  ((andb (even n) (even m)) = true) <-> ((((even n) = true))/\((even m) = true)).
+Proof.
+  intros n m. split.
+  * destruct (even m).
+    destruct (even n).
+    - destruct (even m).
+      + simpl. intro. split; reflexivity.
+      + simpl. intro. split. reflexivity. apply H.
+    - destruct (even m).
+      + simpl. intro. split. apply H. reflexivity.
+      + simpl. intro. split. apply H. reflexivity.
+    - destruct (even n).
+      + simpl. intro. split. reflexivity. apply H.
+      + simpl. intro. split; apply H.
+  * destruct (even n); destruct (even m).
+    - simpl. intro. split.
+    - simpl. intro. destruct H. apply H0.
+    - simpl. intro. destruct H. apply H.
+    - simpl. intro. destruct H. apply H.
+Qed.
+
+Lemma negb_eq: forall a: bool,
+  (negb a = true) -> a = false.
+Proof.
+  intros.
+  destruct a.
+  - simpl in H. symmetry in H. apply H.
+  - reflexivity. 
+Qed.
+
+
+Lemma even_odd: ∀n: nat,
+  even n <> true -> odd n = true.
+Proof.
+  intros.
+  change (odd n) with (negb (even n)).
+  destruct (even n).
+  - simpl. destruct H. reflexivity.
+  - reflexivity.
+Qed.  
+  
+Theorem even_odd_prop: ∀n: nat, ∀A: Prop,
+  (((even n) = true) -> A) -> (~A -> (odd n) = true).
+Proof.
+  intros. generalize H0. apply contras in H.
+  - intro. apply even_odd in H. apply H.
+  - apply H0.
+Qed.
+
+
+
+Qed.
+(* Theorem even_plus: ∀ n m: nat,
+  (even(n + m) = true) <-> ((even n = true) /\ (even m = true)).
+  Proof.
+  intros. split; induction n.
+  - simpl.  destruct (even m).
+    + intro. split; reflexivity.
+    + intro. split. reflexivity. apply H.
+  - simpl(S n + m). rewrite even_n_Sn.
+    intro. apply negb_eq in H. split.
+    + apply contras in IHn. apply not_equals_eq in IHn. *)
+
+(* Theorem mdi_example: ∀n: nat, 
+  even(n) = true -> even(7*n) = true.
+Proof.
+  intros.
+  induction n.
+  - simpl. reflexivity.
+  - rewrite even_n_SSn in H. rewrite even_n_SSn in H.
+    rewrite even_n_SSn in H.
+    simpl (7*S n). rewrite plus_n_Sm.
+Qed. *)
