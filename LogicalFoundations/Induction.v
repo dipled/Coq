@@ -92,6 +92,13 @@ Fixpoint div2 (n:nat) : nat :=
   | S (S n') => S (div2 n')  
 end.  
 
+Fixpoint mod2 (n: nat): nat :=
+  match n with
+  |O => O
+  |S O => S O
+  |S(S n') => mod2 n'
+  end.
+
 Fixpoint sum (n : nat) : nat :=
   match n with
   | O => O
@@ -319,25 +326,10 @@ Proof.
   - rewrite <- even_n_SSn. symmetry. apply bool_neg_both_sides in IHn.
     rewrite <- bool_dne in IHn. apply IHn.
 Qed.
-(* 
-Theorem even_sum: ∀ n m: nat,
-  even (n+m) = (orb (andb (even n) (even m)) (andb (odd n)(odd m))).
+
+(* Theorem mod_even_eq: ∀n: nat,
+  (even n = true) -> (mod2 n = O).
 Proof.
-  intros.
-  induction n; induction m.
-  - reflexivity.
-  - simpl (0+ S m). rewrite even_n_Sn. rewrite <- even_n_SSn.
-    simpl in IHm. simpl (andb (odd 0) (odd(S m))).
-    simpl (andb (even 0)(negb(even m))).
-    destruct (even m).
-    + simpl. reflexivity.
-    + simpl. reflexivity.
-  - rewrite add_0_r. rewrite even_n_Sn. rewrite <- even_n_SSn.
-    change(odd(S n)) with (negb(even (S n))).
-    change(odd(0)) with (negb(even (0))).
-    change(odd(0)) with (negb(even (0))) in IHn.
-    change(odd(n)) with (negb(even (n))) in IHn.
-    rewrite <- even_n_Sn.
-    rewrite add_0_r in IHn.
-    destruct(even n); reflexivity.
-  -  *)
+  intros. induction n.
+  - reflexivity. 
+  -   *)
