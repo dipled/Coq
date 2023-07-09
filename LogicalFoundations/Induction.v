@@ -280,3 +280,32 @@ Proof.
   - simpl. reflexivity.
 Qed.
 
+(* Theorem orb_prop_eq: ∀ α β a: bool,
+((orb α β) = a) <-> (α = a) \/ (β = a).
+Proof.
+  intros.
+  destruct a.
+  - split.
+    + intro. destruct α; destruct β; simpl in H.
+      * left; reflexivity.
+      * left; reflexivity.
+      * right; reflexivity.
+      * right; apply H.
+    + intro. destruct α; destruct β.
+      * simpl. reflexivity.
+      * simpl. reflexivity.
+      * simpl. reflexivity.
+      * simpl. destruct H; apply H.
+  - split.
+    + intro. destruct α; destruct β; simpl in H.
+      * left; apply H.
+      * left; apply H.
+      * right; apply H.
+      * right; apply H.
+    + intro. destruct α; destruct β.
+      * simpl. destruct H; apply H.
+      * simpl. destruct H.
+        ** apply H.
+        ** symmetry. apply H.  *)
+
+
