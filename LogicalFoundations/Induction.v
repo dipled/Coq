@@ -280,32 +280,64 @@ Proof.
   - simpl. reflexivity.
 Qed.
 
-(* Theorem orb_prop_eq: ∀ α β a: bool,
-((orb α β) = a) <-> (α = a) \/ (β = a).
+Theorem orb_prop_eq: ∀ α β a: bool,
+((orb α β) = a) -> (α = a) \/ (β = a).
 Proof.
   intros.
   destruct a.
-  - split.
-    + intro. destruct α; destruct β; simpl in H.
-      * left; reflexivity.
-      * left; reflexivity.
-      * right; reflexivity.
-      * right; apply H.
-    + intro. destruct α; destruct β.
-      * simpl. reflexivity.
-      * simpl. reflexivity.
-      * simpl. reflexivity.
-      * simpl. destruct H; apply H.
-  - split.
-    + intro. destruct α; destruct β; simpl in H.
-      * left; apply H.
-      * left; apply H.
-      * right; apply H.
-      * right; apply H.
-    + intro. destruct α; destruct β.
-      * simpl. destruct H; apply H.
-      * simpl. destruct H.
-        ** apply H.
-        ** symmetry. apply H.  *)
+  - destruct α; destruct β; simpl in H.
+     * left; reflexivity.
+     * left; reflexivity.
+     * right; reflexivity.
+     * right; apply H.
+  - destruct α; destruct β.
+     * simpl in H. left; apply H.
+     * simpl in H. left; apply H.
+     * simpl in H. right; apply H.
+     * simpl in H. right; reflexivity.
+Qed.
+Theorem bool_neg_both_sides: ∀a b: bool,
+  (a = b) <-> ((negb a) = (negb b)).
+Proof.
+  destruct a; destruct b; split; intro.
+  - simpl. reflexivity.
+  - reflexivity.
+  - simpl. symmetry; apply H.
+  - simpl in H. symmetry in H. apply H.
+  - simpl; symmetry in H; apply H.
+  - simpl in H; symmetry in H; apply H.
+  - reflexivity.
+  - reflexivity.
+Qed.
 
-
+Theorem even_n_Sn: ∀n: nat,
+  (even n) = (negb (even (S n))).
+Proof.
+  intros.
+  induction n.
+  - simpl. reflexivity.
+  - rewrite <- even_n_SSn. symmetry. apply bool_neg_both_sides in IHn.
+    rewrite <- bool_dne in IHn. apply IHn.
+Qed.
+(* 
+Theorem even_sum: ∀ n m: nat,
+  even (n+m) = (orb (andb (even n) (even m)) (andb (odd n)(odd m))).
+Proof.
+  intros.
+  induction n; induction m.
+  - reflexivity.
+  - simpl (0+ S m). rewrite even_n_Sn. rewrite <- even_n_SSn.
+    simpl in IHm. simpl (andb (odd 0) (odd(S m))).
+    simpl (andb (even 0)(negb(even m))).
+    destruct (even m).
+    + simpl. reflexivity.
+    + simpl. reflexivity.
+  - rewrite add_0_r. rewrite even_n_Sn. rewrite <- even_n_SSn.
+    change(odd(S n)) with (negb(even (S n))).
+    change(odd(0)) with (negb(even (0))).
+    change(odd(0)) with (negb(even (0))) in IHn.
+    change(odd(n)) with (negb(even (n))) in IHn.
+    rewrite <- even_n_Sn.
+    rewrite add_0_r in IHn.
+    destruct(even n); reflexivity.
+  -  *)
