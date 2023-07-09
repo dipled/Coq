@@ -195,14 +195,14 @@ Proof.
     rewrite -> add_assoc. reflexivity.
 Qed.
 
-Fixpoint even (n:nat):Prop :=
+Fixpoint even (n:nat):bool :=
   match n with
-  |O => True
-  |S O => False
+  |O => true
+  |S O => false
   |S (S n') => even n'
   end.
 
-Definition odd (n: nat): Prop :=  ~(even n).
+Definition odd (n: nat): bool :=  negb (even n).
 
 Fixpoint eqNat (n m : nat) : bool :=
   match n,m with
@@ -247,48 +247,6 @@ Proof.
   reflexivity.
 Qed.
 
-Theorem even_n_odd: ∀n: nat,
-  even n -> ~(odd n).
-Proof.
-  intros.
-  induction n.
-  - change (odd 0) with (~(even 0)).
-    intro. apply H0 in H. destruct H.
-  - change (odd (S n)) with (~(even (S n))).
-    intro. apply H0 in H. destruct H.
-Qed.
-
-Theorem odd_n_even: ∀n: nat,
-~(odd n) -> even n.
-Proof.
-  intros. induction n.
-  - simpl. apply I.
-  - apply even_n_odd.
-
-Theorem even_n_Sn: forall n: nat,
-even(S n) ->  ~(even n).
-Proof.
-  intros. induction n.
-  - intro. simpl in H. destruct H.
-  - intro.
-    rewrite <- even_n_SSn in H. 
-    apply IHn in H0. apply H0 in H; destruct H.
-Qed.
-
-(* Theorem even_lem: ∀n: nat,
-  even(n) \/ ~even n.
-Proof.
-  intros. induction n.
-  - left. 
-  (*Aparentemente a lib de logica do Coq tem um axioma
-  que diz que True é sempre uma proposicao verdadeira*)
-  apply I.
-  - destruct IHn.
-    + right. apply even_n_Sn. rewrite <- even_n_SSn.
-      apply H.
-    + left.  *)
-
-
 Lemma negb_eq: forall a: bool,
   (negb a = true) -> a = false.
 Proof.
@@ -297,14 +255,28 @@ Proof.
   - simpl in H. symmetry in H. apply H.
   - reflexivity. 
 Qed.
+Theorem bool_dne: ∀a: bool,
+  a = negb(negb a).
+Proof.
+  destruct a; reflexivity.
 
-(* Theorem mdi_example: ∀n: nat, 
-  even(n) = true -> even(7*n) = true.
+Qed.
+
+Theorem even_n_odd: ∀n: nat,
+  even n = negb(odd n).
 Proof.
   intros.
   induction n.
   - simpl. reflexivity.
-  - rewrite even_n_SSn in H. rewrite even_n_SSn in H.
-    rewrite even_n_SSn in H.
-    simpl (7*S n). rewrite plus_n_Sm.
-Qed. *)
+  - change(odd(S n)) with (negb(even(S n))).
+    rewrite <- bool_dne. reflexivity.
+Qed.
+
+Theorem even_n_lem: ∀n: nat,
+  (orb (even n) (negb (even n))) = true.
+Proof.
+  intros. destruct (even n).
+  - simpl. reflexivity.
+  - simpl. reflexivity.
+Qed.
+
