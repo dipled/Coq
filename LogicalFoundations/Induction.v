@@ -9,6 +9,13 @@ Proof.
   - simpl. rewrite -> IHn'. reflexivity.
 Qed.
 
+Theorem sub_0_r : forall n:nat, n - 0 = n.
+Proof.
+  intros n. induction n as [| n' IHn'].
+  - reflexivity.
+  - simpl. reflexivity.
+Qed.
+
 Theorem add_assoc : forall n m p : nat,
   n + (m + p) = (n + m) + p.
 Proof.
@@ -234,7 +241,7 @@ Definition eqBool (a b: bool): bool :=
   |_,_ => false
   end.
 
-Lemma not_equals_eq: forall a: bool,
+Lemma bool_diff_eq_false: forall a: bool,
   a = false <-> a <> true.
 Proof.
   intros. destruct a.
@@ -266,10 +273,26 @@ Theorem bool_dne: ∀ a: bool,
   a = negb(negb a).
 Proof.
   destruct a; reflexivity.
-
 Qed.
 
-Theorem even_n_odd: ∀ n: nat,
+
+Lemma bool_diff_eq_true: ∀ a: bool,
+  a <> true <-> a = false.
+Proof.
+  intros.
+  split.
+  - intro. destruct a.
+    + destruct H. reflexivity.
+    + reflexivity.
+  - intro. destruct a.
+    + unfold not. intro. apply bool_diff_eq_false in H. destruct H.
+      reflexivity.
+    + apply bool_diff_eq_false in H. apply H.
+Qed.
+
+
+
+  Theorem even_n_odd: ∀ n: nat,
   even n = negb(odd n).
 Proof.
   intros.
@@ -354,7 +377,73 @@ Proof.
   - intro. intro. apply H in H2. apply H1 in H2. destruct H2.
 Qed.
 
-(* Theorem even_classic_def: ∀ n: nat, 
+
+
+Lemma even_n_diff_true_even_Sn: ∀ n: nat,
+  even n <> true <-> even (S n) = true. 
+Proof.
+  intros. split.
+  - intro. apply bool_diff_eq_true in H.
+    rewrite even_n_Sn in H. apply bool_neg_both_sides in H.
+    rewrite <- bool_dne in H. simpl(negb false) in H.
+    apply H.
+  - intro. rewrite bool_diff_eq_true. rewrite even_n_Sn in H.
+    rewrite <- even_n_SSn in H. apply bool_neg_both_sides in H.
+    rewrite <- bool_dne in H. simpl (negb true) in H. apply H.
+Qed. 
+
+
+Lemma add_one_to_both_sides: ∀ a b : nat,
+  (a=b) -> (a+1 = b+1).
+Proof.
+  intros.
+  induction a; induction b.
+    + reflexivity.
+    + rewrite H. reflexivity.
+    + rewrite H. reflexivity.
+    + rewrite H. reflexivity.
+Qed.
+
+Theorem nat_2m: ∀ n : nat,
+ ((∃ m : nat, n = 2*m) \/ (∃ m : nat, n = 2*m+1)).
+Proof.
+  intros.
+  induction n.
+  - left. exists 0. reflexivity.
+  - destruct IHn. 
+    + right. destruct H. exists x. apply add_one_to_both_sides in H.
+      rewrite plus_n_1 in H. apply H.
+    + left. destruct H. exists (x+1). apply add_one_to_both_sides in H.
+      rewrite plus_n_1 in H. rewrite mult_dist.
+      rewrite <- add_assoc in H. simpl(1+1) in H. apply H.
+Qed.
+
+
+
+Theorem not_n_2m_then_n_2mplus1: ∀ n: nat,
+  ¬(∃ m : nat, n = 2*m) -> (∃ m : nat, n = 2*m + 1).
+Proof.
+  intros. induction n as [| k].
+  - destruct H. exists 0. reflexivity.
+  - pose proof nat_2m as X. destruct X with (S k).
+    + apply H in H0. destruct H0.
+    + apply H0.
+Qed.  
+
+
+Lemma sub_one_both_sides: ∀ a b: nat,
+  (a = b -> (a-1 = b-1)).
+Proof.
+  intros.
+  induction a; induction b.
+  - simpl. reflexivity.
+  - rewrite H. simpl. reflexivity.
+  - rewrite H. reflexivity.
+  - rewrite H. reflexivity.
+Qed. 
+
+
+Theorem even_classic_def: ∀ n: nat, 
   (even n = true) <-> (∃ m: nat, n = 2*m).
 Proof.
   intros.
@@ -362,5 +451,15 @@ Proof.
     + split.
       -  exists 0. reflexivity.
       - intro. reflexivity.
-    + apply auxx in IHk as H'.   
-Qed. *)
+    + apply auxx in IHk as H'. split.
+      - intro. rewrite even_n_diff_true_even_Sn in H'. apply H' in H as H''.
+        apply not_n_2m_then_n_2mplus1 in H''. 
+        destruct H''. apply add_one_to_both_sides in H0.
+        rewrite plus_n_1 in H0. rewrite <- add_assoc in H0.
+        exists (x+1). rewrite mult_dist. simpl(1+1) in H0.
+        apply H0.
+      - intro. destruct H'.
+        pose proof nat_2m as H2.
+        destruct H2 with k.
+        * 
+Qed.
