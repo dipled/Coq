@@ -262,14 +262,14 @@ Proof.
   - simpl in H. symmetry in H. apply H.
   - reflexivity. 
 Qed.
-Theorem bool_dne: ∀a: bool,
+Theorem bool_dne: ∀ a: bool,
   a = negb(negb a).
 Proof.
   destruct a; reflexivity.
 
 Qed.
 
-Theorem even_n_odd: ∀n: nat,
+Theorem even_n_odd: ∀ n: nat,
   even n = negb(odd n).
 Proof.
   intros.
@@ -279,7 +279,7 @@ Proof.
     rewrite <- bool_dne. reflexivity.
 Qed.
 
-Theorem even_n_lem: ∀n: nat,
+Theorem even_n_lem: ∀ n: nat,
   (orb (even n) (negb (even n))) = true.
 Proof.
   intros. destruct (even n).
@@ -287,7 +287,7 @@ Proof.
   - simpl. reflexivity.
 Qed.
 
-Theorem orb_prop_eq: ∀ α β a: bool,
+Theorem orb_prop_eq: ∀  α β a: bool,
 ((orb α β) = a) -> (α = a) \/ (β = a).
 Proof.
   intros.
@@ -303,7 +303,7 @@ Proof.
      * simpl in H. right; apply H.
      * simpl in H. right; reflexivity.
 Qed.
-Theorem bool_neg_both_sides: ∀a b: bool,
+Theorem bool_neg_both_sides: ∀ a b: bool,
   (a = b) <-> ((negb a) = (negb b)).
 Proof.
   destruct a; destruct b; split; intro.
@@ -317,7 +317,7 @@ Proof.
   - reflexivity.
 Qed.
 
-Theorem even_n_Sn: ∀n: nat,
+Theorem even_n_Sn: ∀ n: nat,
   (even n) = (negb (even (S n))).
 Proof.
   intros.
@@ -327,9 +327,40 @@ Proof.
     rewrite <- bool_dne in IHn. apply IHn.
 Qed.
 
-(* Theorem mod_even_eq: ∀n: nat,
-  (even n = true) -> (mod2 n = O).
+Theorem even_n_Sn_Prop: ∀ n: nat,
+  (even n = true) <-> (even (S n) = false).
 Proof.
-  intros. induction n.
-  - reflexivity. 
-  -   *)
+  intros. split.
+  - intro.
+    rewrite bool_neg_both_sides in H.
+    rewrite even_n_Sn in H. 
+    rewrite <- bool_dne in H.
+    simpl (negb true) in H.
+    apply H.
+  - intro.
+    rewrite bool_neg_both_sides in H.
+    rewrite even_n_Sn in H. 
+    rewrite <- bool_dne in H.
+    rewrite even_n_SSn. simpl (negb false) in H.
+    apply H.
+Qed.
+
+Theorem auxx: ∀ A B: Prop,
+  (A <-> B) -> (~A <-> ~B).
+Proof.
+  intros. destruct H.
+  split.
+  - intro.  intro. apply H0 in H2. apply H1 in H2. destruct H2.
+  - intro. intro. apply H in H2. apply H1 in H2. destruct H2.
+Qed.
+
+(* Theorem even_classic_def: ∀ n: nat, 
+  (even n = true) <-> (∃ m: nat, n = 2*m).
+Proof.
+  intros.
+  induction n as [|k].
+    + split.
+      -  exists 0. reflexivity.
+      - intro. reflexivity.
+    + apply auxx in IHk as H'.   
+Qed. *)
