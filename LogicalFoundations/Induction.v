@@ -641,4 +641,58 @@ Proof.
            symmetry in H3. rewrite H3' in H1. rewrite H3 in H1.
            pose proof n_diff_Sn as HMatadora.
            destruct HMatadora with n. symmetry. apply H1.
- Qed.
+Qed.
+
+Theorem even_n_plus_2_even: ∀ n : nat, 
+  even (n + 2) = true <-> even n = true.
+Proof.
+  intros.
+  induction n.
+  - split.
+    + intro. reflexivity.
+    + intro. simpl. reflexivity.
+  - split.
+    + intro. simpl(S n + 2) in H. apply bool_neg_both_sides in H.
+      rewrite <- even_n_Sn in H. simpl in H.
+      apply iff_neg in IHn. apply bool_diff_eq_true in H.
+      apply IHn in H as H'.
+      apply bool_diff_eq_true in H'.
+      rewrite even_n_Sn in H'.
+      rewrite bool_neg_both_sides in H'.
+      rewrite <- bool_dne in H'.
+      simpl (negb false) in H'.
+      apply H'.
+    + intro. rewrite even_n_Sn in IHn.
+      apply iff_neg in IHn.
+      rewrite even_n_Sn in H.
+      rewrite bool_neg_both_sides in H.
+      rewrite <- bool_dne in H.
+      rewrite <- even_n_SSn in H. simpl in H.
+      apply bool_diff_eq_true in H.
+      apply IHn in H as H'.
+      apply bool_diff_eq_true in H'.
+      apply bool_neg_both_sides in H'.
+      rewrite <- bool_dne in H'. simpl (negb false) in H'.
+      apply H'.
+Qed.
+
+(* Theorem even_n_plus_2m_even: forall n m : nat,
+  even(n*m) = true <-> even n = true \/ even m = true.
+Proof.
+  intros.
+  induction n; induction m.
+  - simpl. split; intro.
+    + left; reflexivity.
+    + reflexivity.
+  - simpl (0*S m).
+    split.
+    + intro.
+      left. reflexivity.
+    + intro.
+      reflexivity.
+  - rewrite mul_0_r.
+    split; intro.
+    + right; reflexivity.
+    + reflexivity.
+  - split; intro.
+    +  *)
