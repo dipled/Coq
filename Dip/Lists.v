@@ -1,6 +1,6 @@
 Require Import Coq.Unicode.Utf8.
 Require Import Arith.
-From LF Require Import Induction.
+From DIP Require Import Induction.
 
 Inductive natprod : Type :=
   |pair (n1 n2 :nat).
