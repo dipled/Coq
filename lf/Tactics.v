@@ -413,6 +413,7 @@ Theorem eq_implies_succ_equal : forall (n m : nat),
   n = m -> S n = S m.
 Proof. intros n m H. apply f_equal. apply H. Qed.
 
+
 (** There is also a tactic named `f_equal` that can prove such
     theorems directly.  Given a goal of the form [f a1 ... an = g b1
     ... bn], the tactic [f_equal] will produce subgoals of the form [f
@@ -681,7 +682,16 @@ Theorem plus_n_n_injective : forall n m,
   n + n = m + m ->
   n = m.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n. induction n as [| n' IHn].
+  - intro m. intro. destruct m.
+    + reflexivity.
+    + discriminate H.
+  - intro m. intro. destruct m.
+    + discriminate H.
+    + rewrite <- plus_n_Sm in H. rewrite <- plus_n_Sm in H.
+      simpl in H. injection H as H. apply f_equal.
+      apply IHn. apply H.
+Qed.
 (** [] *)
 
 (** The strategy of doing fewer [intros] before an [induction] to
@@ -785,10 +795,16 @@ Proof.
     Prove this by induction on [l]. *)
 
 Theorem nth_error_after_last: forall (n : nat) (X : Type) (l : list X),
-  length l = n ->
-  nth_error l n = None.
+  length l = n -> nth_error l n = None.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros. generalize dependent n.
+  induction l.
+  - intros n. intro H. reflexivity.
+  - intros n. intro H. destruct n as [|n'].
+    -- discriminate H.
+    -- simpl in H. injection H as H'. apply IHl in H' as H''. simpl. apply H''.
+Qed.
+
 (** [] *)
 
 (* ################################################################# *)
@@ -799,6 +815,7 @@ Proof.
     the expression it denotes.  For example, if we define... *)
 
 Definition square n := n * n.
+
 
 (** ... and try to prove a simple fact about [square]... *)
 
@@ -970,11 +987,16 @@ Fixpoint split {X Y : Type} (l : list (X*Y))
 (** Prove that [split] and [combine] are inverses in the following
     sense: *)
 
-Theorem combine_split : forall X Y (l : list (X * Y)) l1 l2,
+Theorem combine_split : forall X Y (l : list (X * Y)) (l1 : list X) (l2 : list Y),
   split l = (l1, l2) ->
   combine l1 l2 = l.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros. unfold combine. destruct l eqn: El.
+  - simpl in H. injection H as H H0. symmetry in H; symmetry in H0.
+    rewrite H. reflexivity.
+  - unfold split in H. destruct x. destruct H eqn: Eh. 
+
+  
 (** [] *)
 
 (** The [eqn:] part of the [destruct] tactic is optional; although
@@ -1001,6 +1023,7 @@ Definition sillyfun1 (n : nat) : bool :=
 Theorem sillyfun1_odd_FAILED : forall (n : nat),
   sillyfun1 n = true ->
   odd n = true.
+  -
 Proof.
   intros n eq. unfold sillyfun1 in eq.
   destruct (n =? 3).
