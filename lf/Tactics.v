@@ -991,10 +991,18 @@ Theorem combine_split : forall X Y (l : list (X * Y)) (l1 : list X) (l2 : list Y
   split l = (l1, l2) ->
   combine l1 l2 = l.
 Proof.
-  intros. unfold combine. destruct l eqn: El.
-  - simpl in H. injection H as H H0. symmetry in H; symmetry in H0.
-    rewrite H. reflexivity.
-  - unfold split in H. destruct x. destruct H eqn: Eh. 
+  intros X Y l. induction l as [|h l IH].
+  - intros l1 l2 H. 
+    inversion H. reflexivity.
+  - intros [|h1 l1] [|h2 l2] H.
+    + simpl in H. destruct (split l). inversion H.
+    + simpl in H. destruct (split l), h in H. inversion H.
+    + simpl in H. destruct (split l), h in H. inversion H.
+    + simpl in H. destruct h. destruct (split l). inversion H.
+      replace l with (combine l1 l2).
+        reflexivity.
+      apply IH.
+      rewrite H2, H4. reflexivity. Qed.
 
   
 (** [] *)
