@@ -992,17 +992,26 @@ Theorem combine_split : forall X Y (l : list (X * Y)) (l1 : list X) (l2 : list Y
   combine l1 l2 = l.
 Proof.
   intros X Y l. induction l as [|h l IH].
+  - intros l1 l2 H. unfold split in H. injection H as H.
+    rewrite <- H. reflexivity.
   - intros l1 l2 H. 
-    inversion H. reflexivity.
-  - intros [|h1 l1] [|h2 l2] H.
-    + simpl in H. destruct (split l). inversion H.
-    + simpl in H. destruct (split l), h in H. inversion H.
-    + simpl in H. destruct (split l), h in H. inversion H.
-    + simpl in H. destruct h. destruct (split l). inversion H.
+    induction l1 as [|h1 l1], l2 as [|h2 l2].
+    + simpl in H. destruct (split l),h. injection H as H H1.
+      discriminate H.
+
+    + simpl in H. destruct (split l), h in H. injection H as H.
+      discriminate H.
+
+    + simpl in H. destruct (split l), h in H. injection H as H.
+      discriminate H1.
+    
+    + simpl in H. destruct h. destruct (split l). injection H as H. 
       replace l with (combine l1 l2).
+      rewrite H, H1.
         reflexivity.
       apply IH.
-      rewrite H2, H4. reflexivity. Qed.
+      rewrite H0, H2. reflexivity. 
+Qed.
 
   
 (** [] *)
@@ -1080,7 +1089,21 @@ Theorem bool_fn_applied_thrice :
   forall (f : bool -> bool) (b : bool),
   f (f (f b)) = f b.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros f b.
+  destruct b eqn: Eb.
+  - destruct (f true) eqn: Ef.
+    + rewrite Ef. rewrite Ef. reflexivity.
+    + destruct (f false) eqn: Ef2.
+      * rewrite Ef. reflexivity.
+      * rewrite Ef2. reflexivity.
+  - destruct (f false) eqn: Ef.
+    + destruct (f true) eqn: Ef2.
+      * apply Ef2.
+      * apply Ef.
+    + rewrite Ef. apply Ef.
+Qed.
+
+
 (** [] *)
 
 (* ################################################################# *)
@@ -1161,7 +1184,16 @@ Proof.
 Theorem eqb_sym : forall (n m : nat),
   (n =? m) = (m =? n).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intro. induction n as [| k IHn].
+  - intro. destruct m. 
+    + reflexivity.
+    + reflexivity.
+  - intro. destruct m.
+    + reflexivity.
+    + simpl. apply IHn.
+Qed. 
+
+  
 (** [] *)
 
 (** **** Exercise: 3 stars, advanced, optional (eqb_sym_informal)
@@ -1182,7 +1214,10 @@ Theorem eqb_trans : forall n m p,
   m =? p = true ->
   n =? p = true.
 Proof.
-  (* FILL IN HERE *) Admitted.
+    intros.
+    apply eqb_true in H as H2.
+    rewrite H2. apply H0.
+Qed. 
 (** [] *)
 
 (** **** Exercise: 3 stars, advanced (split_combine)
@@ -1196,14 +1231,15 @@ Proof.
     Your property will need to account for the behavior of [combine]
     in its base cases, which possibly drop some list elements. *)
 
-Definition split_combine_statement : Prop
-  (* ("[: Prop]" means that we are giving a name to a
-     logical proposition here.) *)
-  (* REPLACE THIS LINE WITH ":= _your_definition_ ." *). Admitted.
+Definition split_combine_statement : Prop :=
+forall X Y (l : list (X * Y)) (l1 : list X) (l2 : list Y),
+  combine l1 l2 = l -> split l = (l1, l2)
+  .
 
 Theorem split_combine : split_combine_statement.
 Proof.
-(* FILL IN HERE *) Admitted.
+  intros X Y l. induction l.
+  - intros. 
 
 (* Do not modify the following line: *)
 Definition manual_grade_for_split_combine : option (nat*string) := None.
