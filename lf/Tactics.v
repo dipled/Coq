@@ -1238,8 +1238,7 @@ forall X Y (l : list (X * Y)) (l1 : list X) (l2 : list Y),
 
 Theorem split_combine : split_combine_statement.
 Proof.
-  intros X Y l. induction l.
-  - intros. 
+  
 
 (* Do not modify the following line: *)
 Definition manual_grade_for_split_combine : option (nat*string) := None.
