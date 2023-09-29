@@ -4,4 +4,5 @@
 *.vok
 *.vos
 *.d
-
+lf/_CoqProject
+lf/CoqMakeFile*
