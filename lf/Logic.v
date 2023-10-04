@@ -148,8 +148,16 @@ Qed.
 Example and_exercise :
   forall n m : nat, n + m = 0 -> n = 0 /\ m = 0.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n m H. split.
+  - destruct n as [| n'].
+    + reflexivity.
+    + simpl in H. discriminate H.
+  - destruct m as [| m'].
+    + reflexivity.
+    + rewrite <- plus_n_Sm in H. discriminate H.
+Qed.
 (** [] *)
+
 
 (** So much for proving conjunctive statements.  To go in the other
     direction -- i.e., to _use_ a conjunctive hypothesis to help prove
@@ -226,7 +234,8 @@ Proof.
 Lemma proj2 : forall P Q : Prop,
   P /\ Q -> Q.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros P Q H. destruct H as [H1 H2]. apply H2.
+Qed.
 (** [] *)
 
 (** Finally, we sometimes need to rearrange the order of conjunctions
@@ -253,7 +262,12 @@ Theorem and_assoc : forall P Q R : Prop,
   P /\ (Q /\ R) -> (P /\ Q) /\ R.
 Proof.
   intros P Q R [HP [HQ HR]].
-  (* FILL IN HERE *) Admitted.
+  split.
+  - split.
+    + apply HP. + apply HQ.
+  - apply HR.
+Qed.
+  
 (** [] *)
 
 (** By the way, the infix notation [/\] is actually just syntactic
@@ -317,14 +331,24 @@ Qed.
 Lemma mult_is_O :
   forall n m, n * m = 0 -> n = 0 \/ m = 0.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros m n H.
+  destruct m; destruct n.
+  - left. reflexivity.
+  - left. reflexivity.
+  - right. reflexivity.
+  - simpl in H. discriminate H.
+Qed.
 (** [] *)
 
 (** **** Exercise: 1 star, standard (or_commut) *)
 Theorem or_commut : forall P Q : Prop,
   P \/ Q  -> Q \/ P.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros P Q H.
+  destruct H as [H1 | H2].
+  - right. apply H1.
+  - left. apply H2.
+Qed.
 (** [] *)
 
 (* ================================================================= *)
@@ -383,7 +407,11 @@ Proof.
 Theorem not_implies_our_not : forall (P:Prop),
   ~ P -> (forall (Q:Prop), P -> Q).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros P H.
+  intros Q H0.
+  - unfold not in H. apply H in H0 as H1. destruct H1.
+Qed. 
+
 (** [] *)
 
 (** Inequality is a frequent enough form of negated statement
@@ -452,14 +480,19 @@ Definition manual_grade_for_double_neg_inf : option (nat*string) := None.
 Theorem contrapositive : forall (P Q : Prop),
   (P -> Q) -> (~Q -> ~P).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros. intro HP. apply H in HP as QHolds.
+  apply H0 in QHolds as contra. destruct contra.
+Qed.
 (** [] *)
 
 (** **** Exercise: 1 star, standard (not_both_true_and_false) *)
 Theorem not_both_true_and_false : forall P : Prop,
   ~ (P /\ ~P).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros P. unfold not. intro H.
+  destruct H as [H0 H1]. apply H1 in H0 as contra.
+  destruct contra.
+Qed.
 (** [] *)
 
 (** **** Exercise: 1 star, advanced (informal_not_PNP)
@@ -484,7 +517,10 @@ Definition manual_grade_for_informal_not_PNP : option (nat*string) := None.
 Theorem de_morgan_not_or : forall (P Q : Prop),
     ~ (P \/ Q) -> ~P /\ ~Q.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros. simpl. split.
+  - intro. unfold not in H. apply H. left. apply H0.
+  - unfold not in H. intro. apply H. right. apply H0.
+Qed.
 (** [] *)
 
 (** Since inequality involves a negation, it also requires a little
@@ -635,19 +671,40 @@ Qed.
 Theorem iff_refl : forall P : Prop,
   P <-> P.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros. split; intro H; apply H.
+Qed.
 
 Theorem iff_trans : forall P Q R : Prop,
   (P <-> Q) -> (Q <-> R) -> (P <-> R).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros. split.
+  - destruct H as [H1 H2]. intro P_Holds.
+    apply H1 in P_Holds as Q_Holds.
+    apply H0. apply Q_Holds.
+  - intro. apply H. apply H0. apply H1.
+Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars, standard (or_distributes_over_and) *)
 Theorem or_distributes_over_and : forall P Q R : Prop,
   P \/ (Q /\ R) <-> (P \/ Q) /\ (P \/ R).
 Proof.
-  (* FILL IN HERE *) Admitted.
+    intros. split.
+    - intro. split.
+      + destruct H as [H1 | H2].
+        * left. apply H1.
+        * right. destruct H2. apply H.
+      + destruct H.
+        * left; apply H.
+        * right. apply H.
+    - intro H.
+      destruct H.
+      destruct H as [H1 | H2].
+      + left. apply H1.
+      + destruct H0.
+        * left. apply H.
+        * right. split. apply H2. apply H.
+Qed.
 (** [] *)
 
 (* ================================================================= *)

@@ -1236,10 +1236,10 @@ forall X Y (l : list (X * Y)) (l1 : list X) (l2 : list Y),
   combine l1 l2 = l -> split l = (l1, l2)
   .
 
-Theorem split_combine : split_combine_statement.
+(*Theorem split_combine : split_combine_statement.
 Proof.
-  
-
+  intros X Y l l1 l2. 
+*)
 (* Do not modify the following line: *)
 Definition manual_grade_for_split_combine : option (nat*string) := None.
 (** [] *)
