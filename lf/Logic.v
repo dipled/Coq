@@ -1014,15 +1014,34 @@ Qed.
     lemma below.  (Of course, your definition should _not_ just
     restate the left-hand side of [All_In].) *)
 
-Fixpoint All {T : Type} (P : T -> Prop) (l : list T) : Prop
-  (* REPLACE THIS LINE WITH ":= _your_definition_ ." *). Admitted.
-
+Fixpoint All {T : Type} (P : T -> Prop) (l : list T) : Prop :=
+  match l with
+  |[] => True
+  |h :: t => (P h) /\ All P t
+  end.
+  
 Theorem All_In :
   forall T (P : T -> Prop) (l : list T),
     (forall x, In x l -> P x) <->
     All P l.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros T P l. split.
+  - intro H. induction l as [ |h t IHl].
+    + simpl. apply I.
+    + simpl. split.
+      ** apply H. simpl. left. reflexivity.
+      ** apply IHl. intro x. intro H0. apply H. simpl. right. apply H0.
+  - intro H. induction l as [ | h t IHl].
+    + simpl in H. intro x. intro HIn. simpl in HIn.
+      destruct HIn.
+    + simpl in H. destruct H as [Ph  AllPt].
+      intro x. simpl. intro.
+      destruct H as [hx | Inxt].
+      -- rewrite <- hx. apply Ph.
+      -- apply IHl.
+        ++ apply AllPt.
+        ++ apply Inxt.
+Qed.
 (** [] *)
 
 (** **** Exercise: 2 stars, standard, optional (combine_odd_even)
@@ -1033,8 +1052,8 @@ Proof.
     equivalent to [Podd n] when [n] is [odd] and equivalent to [Peven n]
     otherwise. *)
 
-Definition combine_odd_even (Podd Peven : nat -> Prop) : nat -> Prop
-  (* REPLACE THIS LINE WITH ":= _your_definition_ ." *). Admitted.
+Definition combine_odd_even (Podd Peven : nat -> Prop) : nat -> Prop :=
+  (fun x => if (odd x) then Podd x else Peven x).
 
 (** To test your definition, prove the following facts: *)
 
@@ -1044,7 +1063,11 @@ Theorem combine_odd_even_intro :
     (odd n = false -> Peven n) ->
     combine_odd_even Podd Peven n.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros Podd Peven n. intros. unfold combine_odd_even.
+  destruct (odd n).
+  - apply H. reflexivity.
+  - apply H0. reflexivity.
+Qed.
 
 Theorem combine_odd_even_elim_odd :
   forall (Podd Peven : nat -> Prop) (n : nat),
@@ -1052,7 +1075,14 @@ Theorem combine_odd_even_elim_odd :
     odd n = true ->
     Podd n.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros Podd Peven a.
+  intros HComb Hodd.
+  unfold combine_odd_even in HComb.
+  destruct (odd a).
+  - apply HComb.
+  - discriminate Hodd.
+Qed.
+
 
 Theorem combine_odd_even_elim_even :
   forall (Podd Peven : nat -> Prop) (n : nat),
