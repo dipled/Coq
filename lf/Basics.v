@@ -1,4 +1,5 @@
 (** * Basics: Functional Programming in Coq *)
+Require Export Coq.Unicode.Utf8_core.
 
 (* REMINDER:
 

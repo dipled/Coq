@@ -814,7 +814,10 @@ Proof.
 Theorem dist_not_exists : forall (X:Type) (P : X -> Prop),
   (forall x, P x) -> ~ (exists x, ~ P x).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros X P H.
+  intro neg. destruct neg as [a neg]. apply neg in H as contra.
+  destruct contra.
+Qed.
 (** [] *)
 
 (** **** Exercise: 2 stars, standard (dist_exists_or)
@@ -825,17 +828,53 @@ Proof.
 Theorem dist_exists_or : forall (X:Type) (P Q : X -> Prop),
   (exists x, P x \/ Q x) <-> (exists x, P x) \/ (exists x, Q x).
 Proof.
-   (* FILL IN HERE *) Admitted.
+   intros X P Q. split.
+   - intro H. destruct H as [a H].
+     destruct H as [Pa_Holds | Qa_Holds].
+     + left. exists a. apply Pa_Holds.
+     + right. exists a. apply Qa_Holds.
+   - intro H. destruct H as [Exists_Px | Exists_Qx].
+     + destruct Exists_Px as [a Pa]. exists a. left. apply Pa.
+     + destruct Exists_Qx as [a Qa]. exists a. right. apply Qa.
+Qed.
 (** [] *)
+
+Lemma succ_eq_then_eq: ∀ a b : nat, (∃ x, a = b + x) -> (∃x, S a = S (b + x)).
+Proof.
+  intros a b H.
+  destruct H as [c H].
+  exists c.
+  apply f_equal.
+  apply H.
+Qed.
 
 (** **** Exercise: 3 stars, standard, optional (leb_plus_exists) *)
 Theorem leb_plus_exists : forall n m, n <=? m = true -> exists x, m = n+x.
 Proof.
-(* FILL IN HERE *) Admitted.
+  intros a b H. generalize dependent b. induction a.
+  - destruct b.
+    + intro H. exists 0. reflexivity.
+    + intro H. exists (S b). reflexivity.
+  - intros b H. destruct b.
+    + discriminate H.
+    + simpl.  
+      apply succ_eq_then_eq.
+      apply IHa.
+      simpl (S a <=? S b) in H.
+      apply H.
+Qed.
 
 Theorem plus_exists_leb : forall n m, (exists x, m = n+x) -> n <=? m = true.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n m H. generalize dependent n. induction m.
+  - intros n H. destruct n.
+    + reflexivity.
+    + destruct H as [a H]. discriminate H.
+  - intros n H. destruct n.
+    + reflexivity.
+    + simpl in H. destruct H as [a He]. injection He as He. simpl.
+      apply IHm. exists a. apply He.
+Qed.
 
 (** [] *)
 
@@ -921,7 +960,22 @@ Theorem In_map_iff :
          exists x, f x = y /\ In x l.
 Proof.
   intros A B f l y. split.
-  (* FILL IN HERE *) Admitted.
+  - intro H. induction l as [|h t IHl].
+    + simpl in H. destruct H.
+    + simpl in H. destruct H.
+      * exists h. split.
+        apply H. simpl. left. reflexivity.
+      * apply IHl in H as H1. simpl. destruct H1 as [g H1].
+      exists g. split.
+      apply H1.
+      right. apply H1.
+  - intro H. induction l as [|h t IHl].
+    + simpl in H. destruct H. destruct H. destruct H0.
+    + simpl. destruct H. destruct H. simpl in H0. destruct H0.
+      * left. rewrite H0. apply H.
+      * right. apply IHl. exists x. split.
+        apply H. apply H0.
+Qed.
 (** [] *)
 
 (** **** Exercise: 2 stars, standard (In_app_iff) *)
@@ -929,7 +983,23 @@ Theorem In_app_iff : forall A l l' (a:A),
   In a (l++l') <-> In a l \/ In a l'.
 Proof.
   intros A l. induction l as [|a' l' IH].
-  (* FILL IN HERE *) Admitted.
+  - split.
+    + intro H. simpl in H. right. apply H.
+    + intro H. simpl in H. simpl. destruct H as [contra | goal].
+      { destruct contra. } 
+      { apply goal. }
+  - split.
+    + intro H. simpl in H. simpl. destruct H.
+      * left. left. apply H.
+      * apply IH in H as H1. destruct H1.
+        -- left. right. apply H0.
+        -- right. apply H0.
+    + intro H. simpl. simpl in H. destruct H.
+      * destruct H.
+        -- left. apply H.
+        -- right. apply IH. left. apply H.
+      * right. apply IH. right. apply H.
+Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars, standard, especially useful (All)
