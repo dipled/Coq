@@ -673,7 +673,8 @@ Theorem iff_refl : forall P : Prop,
 Proof.
   intros. split; intro H; apply H.
 Qed.
-
+Print True.
+Print False.
 Theorem iff_trans : forall P Q R : Prop,
   (P <-> Q) -> (Q <-> R) -> (P <-> R).
 Proof.
@@ -1083,14 +1084,18 @@ Proof.
   - discriminate Hodd.
 Qed.
 
-
 Theorem combine_odd_even_elim_even :
   forall (Podd Peven : nat -> Prop) (n : nat),
     combine_odd_even Podd Peven n ->
     odd n = false ->
     Peven n.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros Podd Peven a. intros HComb Hodd.
+  unfold combine_odd_even in HComb.
+  destruct (odd a).
+  - discriminate Hodd.
+  - apply HComb.
+Qed.
 (** [] *)
 
 (* ################################################################# *)

@@ -1,6 +1,13 @@
-From Coq Require Export String.
+Require Export Coq.Unicode.Utf8_core.
 
-Axiom HereAndThere : forall A B : Prop,
-    A \/ (~B) \/ (A -> B).
+Inductive HTProp : Set :=
+  | htTrue : HTProp
+  | htNot : HTProp -> HTProp
+  | htOr : HTProp -> HTProp -> HTProp.
+
+Parameter isValid: HTProp -> Prop.
+
+Parameter equivalent: HTProp -> HTProp -> HTProp.
+
 
 

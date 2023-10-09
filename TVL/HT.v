@@ -1,5 +1,5 @@
 From Coq Require Export String.
-
+Require Export Coq.Unicode.Utf8_core.
 
 Inductive HTProp : Type :=
     |T
@@ -45,10 +45,33 @@ Definition impht (p q : HTProp) : HTProp :=
     |T, NF => NF
     end.
 
-Theorem HT_axiom_holds: forall a b : HTProp,
-    orht (orht a (notht b)) (impht a b) = T.
+Definition bimpht (p q : HTProp) : HTProp :=
+  match p, q with
+  |F, F => T
+  |T, T => T
+  |F, _ => F
+  |_, F => F
+  |NF, T => NF
+  |T, NF => NF
+  |NF, NF => T
+  end.
+
+
+
+Notation "x ⇒ y" := (impht x y) (at level 80, right associativity).
+Notation "x ⇔ y" := (bimpht x y) (at level 50, left associativity).
+Notation "x & y" := (andht x y) (at level 20, left associativity).
+Notation "x | y" := (impht x y) (at level 31, left associativity).
+Notation " ! x " := (notht x) (at level 10, left associativity).
+
+Theorem bimp_eq: ∀ a b : HTProp,
+  (a ⇔ b = T) = ((a ⇒ b) & (b ⇒ a) = T).
 Proof.
-    intros a b.
-    destruct a; destruct b; reflexivity.
+  intros a b.
+  destruct a; destruct b; reflexivity.
 Qed.
+
+
+
+
 

@@ -53,23 +53,6 @@ Proof.
       rewrite H0, H2. reflexivity.
 Qed.
 
-Lemma combine_eq : forall (X Y: Type) (x x0: X) (y y0: Y) l l0 t, 
-
-combine (x :: l) (y :: l0) = (x0, y0) :: t -> x = x0 /\ y = y0.
-Proof.
-  intros.
-  simpl in H. injection H as H1 H2. split.
-  - apply H1.
-  - apply H2.
-Qed.
-
-Lemma split_eq : forall (X Y: Type) (t : list (X*Y)) l l0 x0 y0,
-  split t = (l,l0) -> split ((x0, y0) :: t) = (x0 :: l, y0 :: l0).
-Proof.
-  intros.
-  simpl. rewrite H. reflexivity.
-Qed.
-
 
 Theorem split_combine : forall X Y (l1 : list X) (l2 : list Y) (l : list (X*Y)),
   length l1 = length l2 -> combine l1 l2 = l -> split l = (l1, l2).
@@ -88,11 +71,8 @@ Proof.
     + discriminate H0.
     + discriminate H0.
     + discriminate H0.
-    + destruct h. apply combine_eq in H0 as H1. destruct H1.
-      rewrite H1. rewrite H2.
-      apply split_eq. apply IHl.
-      simpl in H. injection H as H. apply H. simpl in H0.
-      injection H0 as H0. apply H4.
+    + destruct h. simpl in H. injection H as H. injection H0 as H0. apply IHl in H.
+      simpl. rewrite H. rewrite H0,H1. reflexivity. apply H2.
 Qed. 
       
       
