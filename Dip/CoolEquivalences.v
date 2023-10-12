@@ -6,6 +6,8 @@ Definition LEM := forall A : Prop, A \/ ~A.
 
 Definition IP := forall A : Prop, (~A -> False) -> A.
 
+Definition Hilbert_Negation := forall A B : Prop, (A -> B) -> ((~A -> B) -> B).
+
 Theorem pierce_lem_eq: Pierce <-> LEM.
 Proof.
   unfold Pierce, LEM. split.
@@ -29,7 +31,7 @@ Proof.
     apply H. intro. apply H0 in H1 as contra. destruct contra.
 Qed.
 
-Theorem lem_dne_qq: DNe <-> LEM.
+Theorem lem_dne_eq: DNe <-> LEM.
 Proof.
   unfold DNe, LEM. split.
   - intro dne. intro A. apply dne. intro.
@@ -75,4 +77,19 @@ Proof.
   - intro ip. intro A. intro H.
     apply ip. intro H0. apply H. apply H0.
 Qed.
+
+Theorem hilbert_lem_eq: Hilbert_Negation <-> LEM.
+Proof.
+  unfold Hilbert_Negation, LEM. split.
+  - intro hilbert. intro A. apply hilbert with (A := A).
+    + intro. left. apply H.
+    + intro. right. apply H.
+  - intro lem. intros A B. intro H. intro H0.
+    specialize lem with (A := A).
+    destruct lem.
+    + apply H. apply H1.
+    + apply H0. apply H1.
+Qed.
+
+
 
