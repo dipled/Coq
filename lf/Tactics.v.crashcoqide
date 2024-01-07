@@ -991,7 +991,7 @@ Theorem combine_split : forall X Y (l : list (X * Y)) (l1 : list X) (l2 : list Y
   split l = (l1, l2) ->
   combine l1 l2 = l.
 Proof.
-  intros X Y l.  induction l as [|h l IH].
+  intros X Y l. induction l as [|h l IH].
   - intros l1 l2 H. unfold split in H. injection H as H.
     rewrite <- H. reflexivity.
   - intros l1 l2 H. 
